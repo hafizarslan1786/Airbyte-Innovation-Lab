@@ -260,35 +260,6 @@ with col2:
     except Exception as e:
         st.error(f"Error loading sensor analysis data: {str(e)}")
 
-# Natural Language Query with minimal decoration
-with st.expander("Ask the Duck"):
-    user_query = st.text_input(
-        "Ask a question about your sensor data:",
-        placeholder="e.g., What is the average temperature of Machine_001?"
-    )
-    if user_query:
-        with st.spinner('Analyzing...'):
-            try:
-                query = f"SELECT * from dbo.sensor_data WHERE machine_id = %s;"
-                
-                # Use a parameterized query to avoid SQL injection
-                cursor.execute(query, (user_query,))
-                
-                # Fetch results
-                result = cursor.fetchall()
-                
-                # Convert the result to a DataFrame
-                columns = [desc[0] for desc in cursor.description]  # Extract column names
-                df = pd.DataFrame(result, columns=columns)
-                
-                # Display the DataFrame in Streamlit
-                st.dataframe(df)
-            except psycopg2.Error as e:
-                conn.rollback()  # Reset the connection to continue
-                st.error(f"Query error: {str(e)}")
-            except Exception as e:
-                st.error(f"Query error: {str(e)}")
-
 # Anomaly Detection in expander
 with st.expander("Anomaly Detection"):
     # Sensitivity slider
